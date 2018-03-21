@@ -1,0 +1,25 @@
+language: java
+env:
+  global:
+  - GIT_USERNAME=Travis CI
+  - GIT_EMAIL=builds@travis-ci.com
+  - TAG=$(./pipeline.sh getProperty version gradle.properties)
+  - LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B | tr -d '\n')
+  - CD_COMMIT_MESSAGE='[travis] Bump version number'
+  - GITHUB_USER=dermotmburke
+  - secure: rFaULYSzmTx69Bqn7R6764vIF0GGzkLSk/v9TQb1X/Mv5n9xXF3j5g1wWIbV8opJLNPb00wjONu3H70FlZPxlu8ysRiJzChncCf189LuHl8AFmNnrwcLq6UIfKCEccNB8Gruedv0rEKUkqstqO9NYkRvnPm8J3qtGm6Jp4eqfzfJmqENjyZgkHTL0ey1xp66iWUgGvFwwO8Ozjt0i5Js/xjuDHcQnk1X74bcDjOuMKAtCGsDsmFLsHQtaTe/70LLgnpkAlJS4GbmORx96eWmquBoVvfPfdYpE09LqOcRGd2FCb/zUAju8sjgo4YWoNZcjZriyi+HkxwapjQadvabSAcVXPzIMrTu5kUtsrGGzQovlSEKqPpTCVHr81vFH9F0hmzaWSKSe30BSOu+roydyU9pdTUqmcvQIpx0arZPvLotBe9A8LnZ6qjZHjGK8IqXgMJfTIo2S8XUQ2xoQ8ywcwcBe/ZuImrRELMq6+K2VzoTJi3DLeKoc6IwTdU3G9JBHt9MjXzgYNSgKgPAAoiJWQ13r1dcCOeQm1QKtUqb6ohwzi30JlJSsJXPT0JMwe0EbYIcNavgFBYdvF14J68A2T4JuSGKWViRX+pOROh2gBg7KlY4NnyF+gf4cFvdZYgYuiM8trFl0RSa515Zcjyj2HeWx7o1fKviBm0GXEL64XY=
+  - secure: WRrNyoMYUKQu4xbkUSCvusX91GF7WL/4jzZMLeiPc2cjmDoIFuX77upCjpoPS0OhujmtdF6SOsDCPsgidnDT2+VlnxHybHE3qLdtcu5iaLyIg1zq7V8b0/DcYMgBE0BqnxrZphQCB4n8/bZo4y+xRyjm/5ODfBiBftjxdQP8bfJ7wKAJ7el1d2CGg/K+gr2gLhcZs6QkSymrOGIK+ghskHHZj8PXA1Qygze9wtzCQdjtBYcauLyFLoLmdmHf3f/Uf/BS6ryQqSFHn4jlmXazrzVcUf1lfVAay+5rmeMY5lRxihn2wDLVjPI+qih7IoDcin281CgoosHvpF18DfIkjWg0QooFzxJ/p1KJTl9Kv75R0vt4JvDON/AWNCNlp9iDJEgMdJcmIlrUY3SjMaj8RjlBKI50sdjcs2wK8pUMpju8K6ronZRAINzJpTq6+3XzxQVH3Q6w01oXVjKDw6IgwB4rYCRctHrPA3kbz+9MxEWP22S53k+Qgwf3+2eBoVpoxa2Hz5Xt4qAcj2irJBALoFwf9u0Wk2H5M82P4lupK9JuH/jBtKC3/iVywqliRc9TMzdbxNnS5ImAN54n51sUm3MT2e0tVUkotLIV3y3eA9p6pdbxKjVFWad/D66qnChOaT7XQ0Sv4xWALJmMFckMnUDb5AmTOdfNQYnvzPFQdDg=
+script:
+- ./pipeline.sh build
+before_deploy:
+- ./pipeline.sh tag
+deploy:
+  - provider: script
+    script: gradle bintrayUpload -PbintrayUser=buildit -PbintrayKey=$BINTRAY_TOKEN -PdryRun=false
+    skip_cleanup: true
+    on:
+      branch: master
+      tags: false
+      condition: '"${LAST_COMMIT_MESSAGE}" != "${CD_COMMIT_MESSAGE}"'
+after_deploy:
+- ./pipeline.sh bump
