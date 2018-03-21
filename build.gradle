@@ -1,0 +1,102 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: "com.jfrog.bintray"
+
+build.dependsOn dependsOn: ['zip']
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.8.0'
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
+    }
+}
+
+build.dependsOn dependsOn: ['zip']
+
+dependencies {
+
+    runtime 'org.apache.ant:ant:1.9.4'
+    runtime 'org.apache.ivy:ivy:2.4.0'
+    runtime ("com.buildit:encryptor:1.1.0"){
+        transitive = false
+    }
+    runtime ("com.buildit.jenkins:jenkins-config-fetcher:1.1.0"){
+        transitive = false
+    }
+    runtime "com.buildit:artifact-fetcher:1.0.0"
+
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.7'
+
+    testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.9'
+    testCompile "org.jenkins-ci.main:jenkins-war:2.9"
+    testCompile "org.jenkins-ci.main:jenkins-war:2.9:war-for-test@jar"
+
+    testCompile "org.zeroturnaround:zt-zip:1.9"
+    testCompile 'org.eclipse.jetty:jetty-server:9.2.3.v20140905'
+
+    testCompile "org.eclipse.jgit:org.eclipse.jgit:4.7.0.201704051617-r"
+    testCompile 'org.assertj:assertj-core:3.7.0'
+}
+
+
+group = "${project.groupId}"
+version = "${project.version}"
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            artifact("${zip.archivePath}")
+        }
+    }
+}
+
+repositories {
+    maven {
+        url 'http://bits.netbeans.org/maven2'
+    }
+    maven {
+        url 'http://repo.jenkins-ci.org/releases/'
+    }
+    mavenCentral()
+    jcenter()
+
+    maven {
+        url 'https://dl.bintray.com/buildit/maven'
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayKey') ? project.property('bintrayKey') : System.getenv('BINTRAY_TOKEN')
+    publish = true
+    publications = ['MyPublication']
+    pkg {
+        repo = 'maven'
+        name = "${project.artifactId}"
+        userOrg = "buildit"
+        licenses = ['MIT']
+        vcsUrl = "https://github.com/buildit/${project.artifactId}"
+        publicDownloadNumbers = true
+    }
+}
+
+
+task zip(type: Zip) {
+    baseName = "${artifactId}"
+    from("scripts") {
+        into ''
+    }
+    from(configurations.runtime) {
+        into 'lib'
+    }
+    destinationDir file("${project.buildDir}z/libs")
+}
+
+artifacts {
+    archives file: zip.archivePath, name: "${artifactId}", type: "${type}", builtBy: zip
+}
