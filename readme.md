@@ -5,7 +5,9 @@ A framework to enable configuration of jenkins at startup.
 
 ## Using the Runner
 
-To use the runner, unzip the build artifact to $JENKINS_HOME/init.groovy.d and provide the configuration as described in the README.md of the [Jenkins Config Fetcher](https://github.com/buildit/jenkins-config-fetcher)
+The simplest way to use the runner is via the Buildit [Jenkins Image](https://github.com/buildit/jenkins-image).
+
+To use the runner outside of the image, unzip the build artifact to $JENKINS_HOME/init.groovy.d and provide the configuration as described in the README.md of the [Jenkins Config Fetcher](https://github.com/buildit/jenkins-config-fetcher).
 
 ## Startup Scripts
 
