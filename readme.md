@@ -1,6 +1,9 @@
 
 # Jenkins Startup Scripts Runner
 
+[![Build Status](https://travis-ci.org/buildit/jenkins-startup-scripts-runner.svg?branch=master)](https://travis-ci.org/buildit/jenkins-startup-scripts-runner)
+[ ![Download](https://api.bintray.com/packages/buildit/maven/jenkins-startup-scripts-runner/images/download.svg) ](https://bintray.com/buildit/maven/jenkins-startup-scripts-runner/_latestVersion)
+
 A framework to enable configuration of jenkins at startup. 
 
 ## Using the Runner
