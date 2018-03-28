@@ -1,6 +1,7 @@
 target
 .gradle/
 build/
+buildz/
 out/
 org.junit.rules*/
 
