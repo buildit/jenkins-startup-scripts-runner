@@ -25,6 +25,6 @@ startupScripts=[
 ]
 ```
 
-The runner will then proceed to unzip the archive and look for a file called main.groovy in the archive's root directory before binding the jenkinsConfig value (with the entire parsed config) and running the main.main() method. 
+The runner will then proceed to unzip the archive, add any jars in te lib directory to the classpath a and look for a file called main.groovy in the archive's root directory before binding the jenkinsConfig value (with the entire parsed config) and running the main.main() method. 
 
-
+The original set of startup scripts can be found here - [Jenkins Startup Scripts](https://github.com/buildit/jenkins-startup-scripts). It is possible to provide other scripts by just following the pattern above.
