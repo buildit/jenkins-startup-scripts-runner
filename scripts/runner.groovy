@@ -26,7 +26,24 @@ def load(script, args=[:], classLoader=this.class.classLoader){
     }
 }
 
+def jenkinsHome(){
+    if(System.getenv("JENKINS_HOME")){
+        return System.getenv("JENKINS_HOME")
+    }
+    if(new File('/etc/default/jenkins').exists()){
+        return readProperties('/etc/default/jenkins').getProperty('JENKINS_HOME')
+    }
+    if(new File('/etc/sysconfig/jenkins').exists()){
+        return readProperties('/etc/sysconfig/jenkins').getProperty('JENKINS_HOME')
+    }
+    throw new IllegalStateException("JENKINS_HOME value cannot be found")
+}
+
 def baseDirectory(){
+    def jenkinsHomeInitDir = "${jenkinsHome()}/init.groovy.d"
+    if(new File("${jenkinsHomeInitDir}/runner.groovy").exists()){
+        return jenkinsHomeInitDir
+    }
     File thisScript = new File(getClass().protectionDomain.codeSource.location.path)
     return thisScript.getParent()
 }
