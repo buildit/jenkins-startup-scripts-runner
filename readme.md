@@ -25,6 +25,17 @@ startupScripts=[
 ]
 ```
 
-The runner will then proceed to unzip the archive, add any jars in te lib directory to the classpath a and look for a file called main.groovy in the archive's root directory before binding the jenkinsConfig value (with the entire parsed config) and running the main.main() method. 
+The runner will then proceed to unzip the archive, add any jars in the lib directory to the classpath and look for a file called main.groovy in the archive's root directory before binding the jenkinsConfig value (with the entire parsed config) and running the main.main() method. 
 
 The original set of startup scripts can be found here - [Jenkins Startup Scripts](https://github.com/buildit/jenkins-startup-scripts). It is possible to provide other scripts by just following the pattern above.
+
+## Running the Runner
+
+The runner is designed to trigger as a [Jenkins Hook Script](https://wiki.jenkins.io/display/JENKINS/Groovy+Hook+Script) - meaning it will run whenever Jenkins is restarted. 
+
+It is also possible to trigger the runner manually by running
+
+```groovy
+new GroovyShell(this.class.classLoader).evaluate(new File("${System.getenv('JENKINS_HOME')}/init.groovy.d/runner.groovy"))
+```
+from the jenkins script console. 
