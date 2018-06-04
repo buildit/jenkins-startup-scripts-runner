@@ -89,7 +89,7 @@ task zip(type: Zip) {
     from(configurations.runtime) {
         into 'lib'
     }
-    destinationDir file("${project.buildDir}z/libs")
+    destinationDir file("${project.buildDir}/libs")
 }
 
 artifacts {
